@@ -46,7 +46,18 @@ const cert = acm.Certificate.fromCertificateArn(this, 'Certificate', acmarn)
 
 Downside of this way is that you might get error message when you run cdk deploy.
 `Error: ARNs must start with "arn:" and have at least 6 components: dummy-value-for-/xxx/xxxxx/xxxx`
-This means you can't get data from ssm for cert.
+This means for some reason you can't get data from ssm for cert. I don't know why.
+
+The workaround for this problem is prepare cdk.context.json at the root of the cdk project.
+To generate cdk.context.json, remove other codes except the line above.
+
+cdk.context.json will be something like this.
+
+```cdk.context.json
+{
+  "ssm:account=00000000:parameterName=xxxxxxxxx:region=ap-northeast-1": "arn:aws:acm:us-east-1:xxxxxx:certificate/xxxxx"
+}
+```
 
 #### Example 2.
 
