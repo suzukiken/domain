@@ -33,12 +33,12 @@ export class DomainStack extends cdk.Stack {
     })
     
     new ssm.StringParameter(this, 'cognito_userpool_id_ssmparamname', {
-      parameterName: this.node.tryGetContext('useast1_acmarn_exportname'),
+      parameterName: this.node.tryGetContext('useast1_acmarn_ssmparamname'),
       stringValue: notrhvirginia_certificate.certificateArn,
     })
     
     new ssm.StringParameter(this, 'cognito_userpool_appclientforwebid_ssmparamname', {
-      parameterName: this.node.tryGetContext('hostedzoneid_exportname'),
+      parameterName: this.node.tryGetContext('hostedzoneid_ssmparamname'),
       stringValue: zone.hostedZoneId,
     })
     

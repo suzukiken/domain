@@ -30,6 +30,8 @@ Examples of the resources which the other CDK projects creates:
 
 Example Typescript code. This  if `acmarn_ssm_param` is defined in cdk.json.
 
+#### Example 1.
+
 cdk.json
 ```json
 "acmarn_ssm_param": "/domain/examplecom/wildcard/useast1/acmarn"
@@ -39,6 +41,41 @@ CDK stack
 ```Typescript
 const acmarn_ssm_param = this.node.tryGetContext('acmarn_ssm_param')
 const acmarn = ssm.StringParameter.valueFromLookup(this, acmarn_ssm_param)
+const cert = acm.Certificate.fromCertificateArn(this, 'Certificate', acmarn)
+```
+
+Downside of this way is that you might get error message when you run cdk deploy.
+`Error: ARNs must start with "arn:" and have at least 6 components: dummy-value-for-/xxx/xxxxx/xxxx`
+This means you can't get data from ssm for cert.
+
+#### Example 2.
+
+cdk.json
+```json
+"acmarn_export_param": "examplecom-wildcard-useast1-acmarn"
+```
+
+CDK stack 
+```Typescript
+const acmarn_export_param = this.node.tryGetContext('acmarn_export_param')
+const acmarn = cdk.Fn.importValue(this, acmarn_export_param)
+const cert = acm.Certificate.fromCertificateArn(this, 'Certificate', acmarn)
+```
+
+Downside of this way is this makes Cross Stack Reference.
+You can't destroy the stack which have referenced parameter.
+This means you need to destroy your stack when destroy referenced stack.
+
+#### Example 3
+
+cdk.json
+```json
+"acmarn": "arn:aws:acm:ap-northeast-1:xxxxxxx:certificate/xxxxx-xxxx-xxxxx"
+```
+
+CDK stack 
+```Typescript
+const acmarn = this.node.tryGetContext('acmarn')
 const cert = acm.Certificate.fromCertificateArn(this, 'Certificate', acmarn)
 ```
 
