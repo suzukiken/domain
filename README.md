@@ -10,10 +10,9 @@
 * CFNOutput
   * ACM arn
   * HostedZone Id
-    * Parameter names are defined in cdk.json
 * SSM Parameters
   * ACM arn
-    * Parameter names are defined in cdk.json
+  * HostedZone Id
 
 (diagram)[https://diagram.figmentresearch.com/domain]
 
@@ -47,7 +46,7 @@ const cert = acm.Certificate.fromCertificateArn(this, 'Certificate', acmarn)
 
 * `npm install`
 * `cdk deploy`
-* `aws ssm get-parameters-by-path --path /v2/domain --recursive`
+* `aws ssm get-parameters-by-path --path /domain --recursive`
 * `npm run diagram`
 
 ## Parameters
