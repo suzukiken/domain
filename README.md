@@ -1,14 +1,60 @@
-# Welcome to your CDK TypeScript project!
+# CDK Project to create SSL certs for microservices 
 
-This is a blank project for TypeScript development with CDK.
+## Resources to be created
 
-The `cdk.json` file tells the CDK Toolkit how to execute your app.
+* SSL Certificate
+  * wildcard certificate for a domain
+  * Regions
+    * ap-northeast-1
+    * us-east-1
+* CFNOutput
+  * ACM arn
+  * HostedZone Id
+    * Parameter names are defined in cdk.json
+* SSM Parameters
+  * ACM arn
+    * Parameter names are defined in cdk.json
 
-## Useful commands
+(diagram)[https://diagram.figmentresearch.com/domain]
 
- * `npm run build`   compile typescript to js
- * `npm run watch`   watch for changes and compile
- * `npm run test`    perform the jest unit tests
- * `cdk deploy`      deploy this stack to your default AWS account/region
- * `cdk diff`        compare deployed stack with current state
- * `cdk synth`       emits the synthesized CloudFormation template
+## Purpose
+
+To place ACM arn at SSM param store which will be used other CDK projects.
+
+Examples of the resources which the other CDK projects creates:
+
+  * CloudFront for S3 Origin
+  * Cognito Userpool Domain
+  * ApiGateway Custom Domain
+
+### How to use the resources which this CDK project creates
+
+Example Typescript code. This  if `acmarn_ssm_param` is defined in cdk.json.
+
+cdk.json
+```json
+"acmarn_ssm_param": "/domain/examplecom/wildcard/useast1/acmarn"
+```
+
+CDK stack 
+```Typescript
+const acmarn_ssm_param = this.node.tryGetContext('acmarn_ssm_param')
+const acmarn = ssm.StringParameter.valueFromLookup(this, acmarn_ssm_param)
+const cert = acm.Certificate.fromCertificateArn(this, 'Certificate', acmarn)
+```
+
+## Commands
+
+* `npm install`
+* `cdk deploy`
+* `aws ssm get-parameters-by-path --path /v2/domain --recursive`
+* `npm run diagram`
+
+## Parameters
+
+These parameters are defined in cdk.json 
+
+* domain name
+* SSM Parameter name
+* Output name
+
